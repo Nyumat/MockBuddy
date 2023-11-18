@@ -1,3 +1,3 @@
-import Feedback from "~/lib/pages/feedback";
+import Feedback from '~/lib/pages/feedback';
 
 export default Feedback;

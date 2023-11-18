@@ -1,7 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 const NextSitemapConfig = {
-  siteUrl: "https://nextarter-chakra.sznm.dev",
-  generateRobotsTxt: true,
+    siteUrl: "https://mock-buddy.vercel.app/",
+    generateRobotsTxt: true,
 };
 
 module.exports = NextSitemapConfig;

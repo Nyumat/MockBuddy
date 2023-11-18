@@ -1,6 +1,7 @@
 'use client';
 
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+
 import WebcamCapture from '~/lib/components/video/WebcamCapture';
 
 const Video = () => {

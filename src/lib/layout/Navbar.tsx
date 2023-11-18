@@ -1,21 +1,21 @@
 'use client';
 
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
-  Box,
-  Flex,
   Avatar,
+  Box,
+  Button,
+  Flex,
   HStack,
   IconButton,
-  Button,
   Menu,
   MenuButton,
-  MenuList,
-  MenuItem,
   MenuDivider,
-  useDisclosure,
-  useColorModeValue,
+  MenuItem,
+  MenuList,
   Stack,
+  useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 
 import ThemeToggle from '../components/samples/ThemeToggle';

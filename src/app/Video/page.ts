@@ -1,3 +1,3 @@
-import Video from "~/lib/pages/video";
+import Video from '~/lib/pages/video';
 
 export default Video;
