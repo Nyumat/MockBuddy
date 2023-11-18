@@ -2,7 +2,7 @@
 
 import { Flex, Text } from '@chakra-ui/react';
 
-const Home = () => {
+const Feedback = () => {
   return (
     <Flex
       direction="column"
@@ -13,9 +13,9 @@ const Home = () => {
       mb={8}
       w="full"
     >
-      <Text fontSize={50}>Elevate your tech interviews.</Text>
+      <Text fontSize={40}>Here is your AI-generated feedback!</Text>
     </Flex>
   );
 };
 
-export default Home;
+export default Feedback;
