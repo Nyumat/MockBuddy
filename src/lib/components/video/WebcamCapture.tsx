@@ -11,7 +11,7 @@ const WebcamCapture = () => {
       if (webcamRef.current) {
         setCapturing(true);
         mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-          mimeType: "video/webm"
+          mimeType: "video/webm",
         });
         mediaRecorderRef.current.addEventListener(
           "dataavailable",
@@ -39,14 +39,14 @@ const WebcamCapture = () => {
     const handleDownload = React.useCallback(() => {
       if (recordedChunks.length) {
         const blob = new Blob(recordedChunks, {
-          type: "video/webm"
+          type: "video/mp4"
         });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         document.body.appendChild(a);
         a.style.display = 'none';
         a.href = url;
-        a.download = 'react-webcam-stream-capture.webm';
+        a.download = 'recording.mp4';
         a.click();
         window.URL.revokeObjectURL(url);
         setRecordedChunks([]);
@@ -55,7 +55,7 @@ const WebcamCapture = () => {
 
     return (
       <>
-        <Webcam audio={false} ref={webcamRef} />
+        <Webcam muted={true} audio={true} ref={webcamRef} />
         {capturing ? (
           <button onClick={handleStopCaptureClick}>Stop Capture</button>
         ) : (
