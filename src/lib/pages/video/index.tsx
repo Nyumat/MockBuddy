@@ -1,8 +1,9 @@
 'use client';
 
 import { Flex, Text } from '@chakra-ui/react';
+import WebcamCapture from '~/lib/components/video/WebcamCapture';
 
-const Home = () => {
+const Video = () => {
   return (
     <Flex
       direction="column"
@@ -13,9 +14,9 @@ const Home = () => {
       mb={8}
       w="full"
     >
-      <Text fontSize={50}>Elevate your tech interviews.</Text>
+      <WebcamCapture />
     </Flex>
   );
 };
 
-export default Home;
+export default Video;
