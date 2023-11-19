@@ -2,9 +2,9 @@
 
 import { Flex } from '@chakra-ui/react';
 
-import WebcamCapture from '~/lib/components/video/WebcamCapture';
+import MultiStepForm from '~/lib/components/onboarding/TransitionPage';
 
-const Video = () => {
+const Onboard = () => {
   return (
     <Flex
       direction="column"
@@ -15,9 +15,9 @@ const Video = () => {
       mb={8}
       w="full"
     >
-      <WebcamCapture companyName='Google' />
+      <MultiStepForm />
     </Flex>
   );
 };
 
-export default Video;
+export default Onboard;

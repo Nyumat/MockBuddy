@@ -24,7 +24,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const Links: string[] = ['Video', 'Feedback']; // TODO: Add links
+const Links: string[] = ['Video', 'Feedback', 'Onboard']; // TODO: Add links
 
 const NavLink = (props: Props) => {
   const { children } = props;
