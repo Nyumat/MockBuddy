@@ -6,10 +6,12 @@ import {
   HStack,
   Heading,
   Image,
+  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
@@ -27,6 +29,8 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
   const [remainingTime, setRemainingTime] = useState<number>(15);
   const [webcamLoaded, setWebcamLoaded] = useState<boolean>(false);
   const videoConstraints = { width: 1940, height: 1480, facingMode: 'user' };
+  const [showSpinner, setShowSpinner] = useState<boolean>(false);
+  const router = useRouter();
 
   const ffmpeg = createFFmpeg({
     corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
@@ -66,42 +70,61 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
     setRemainingTime(0);
   }, [mediaRecorderRef, setCapturing]);
 
-  const handleDownload = useCallback(async () => {
+
+  const handleDownload = useCallback(() => {
+    setShowSpinner(true);
     if (recordedChunks.length) {
-      const file = new Blob(recordedChunks, {
-        type: `video/mp4`,
-      });
+      //   const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      //   const url = URL.createObjectURL(blob);
+      //   const a = document.createElement('a');
+      //   document.body.appendChild(a);
+      //   a.style.display = 'none';
+      //   a.href = url;
+      //   a.download = 'react-webcam-stream-capture.webm';
+      //   a.click();
+      //   window.URL.revokeObjectURL(url);
+      setTimeout(() => {
+        router.push('/feedback');
+        setRecordedChunks([]);
+      }, 5000);
 
-      const unique_id = "test";
+//   const handleDownload = useCallback(async () => {
+//     if (recordedChunks.length) {
+//       const file = new Blob(recordedChunks, {
+//         type: `video/mp4`,
+//       });
 
-      // This checks if ffmpeg is loaded
-      if (!ffmpeg.isLoaded()) {
-        await ffmpeg.load();
-      }
+//       const unique_id = "test";
 
-      // This writes the file to memory, removes the video, and converts the audio to mp3
-      ffmpeg.FS("writeFile", `${unique_id}.mp4`, await fetchFile(file));
-      await ffmpeg.run();
+//       // This checks if ffmpeg is loaded
+//       if (!ffmpeg.isLoaded()) {
+//         await ffmpeg.load();
+//       }
 
-      // This reads the converted file from the file system
-      const fileData = await ffmpeg.FS("readFile", `${unique_id}.mp4`);
-      // This creates a new file from the raw data
-      const output = new File([fileData.buffer], `${unique_id}.mp4`, {
-        type: "video/mp4",
-      });
+//       // This writes the file to memory, removes the video, and converts the audio to mp3
+//       ffmpeg.FS("writeFile", `${unique_id}.mp4`, await fetchFile(file));
+//       await ffmpeg.run();
 
-      const formData = new FormData();
-      formData.append("file", output, `${unique_id}.mp4`)
+//       // This reads the converted file from the file system
+//       const fileData = await ffmpeg.FS("readFile", `${unique_id}.mp4`);
+//       // This creates a new file from the raw data
+//       const output = new File([fileData.buffer], `${unique_id}.mp4`, {
+//         type: "video/mp4",
+//       });
 
-      // This sends the file to the server
-      const response = await fetch("http://localhost:3000/api/whisper", {
-        method: "POST",
-        body: formData,
-      });
-      console.log(response);
-      setRecordedChunks([]);
-    }
-  }, [recordedChunks]);
+//       const formData = new FormData();
+//       formData.append("file", output, `${unique_id}.mp4`)
+
+//       // This sends the file to the server
+//       const response = await fetch("http://localhost:3000/api/whisper", {
+//         method: "POST",
+//         body: formData,
+//       });
+//       console.log(response);
+//       setRecordedChunks([]);
+
+     }
+  }, [recordedChunks, router]);
 
   const handleUserMedia = () => {
     setWebcamReady(true);
@@ -190,7 +213,12 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
           </HStack>
         </Box>
 
-        <Box textAlign="center">
+        <Box
+          textAlign="center"
+          style={{
+            transform: 'translateY(-120px)',
+          }}
+        >
           {!capturing && (
             <Button
               id="startTimer"
@@ -198,27 +226,46 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
               borderRadius="full"
               h="8"
               w="8"
+              p={2}
               bg="red.500"
               color="white"
               _hover={{ boxShadow: 'xl' }}
               ring="4"
               ringColor="white"
-              ringOffsetColor="gray.500"
-              ringOffset="2"
+              ringOffsetColor="white"
+              ringOffset="10"
               transform="active:scale-95"
               transitionDuration="75ms"
               justifyContent="center"
               alignItems="center"
               onClick={handleStartCaptureClick}
-            />
+            >
+              Start
+            </Button>
           )}
         </Box>
 
         {!capturing && recordedChunks.length > 0 && (
           <Center>
-            <Button colorScheme="blue" onClick={handleDownload}>
-              Download
-            </Button>
+            {!showSpinner && (
+              <Button colorScheme="blue" onClick={handleDownload}>
+                Transcribe Video
+              </Button>
+            )}
+            {showSpinner && (
+              <div style={{ textAlign: 'center', display: 'flex', flexDir: 'row', alignItems: 'center', gap: 4 }}>
+                <Text fontSize="lg" color="white">
+                  Transcribing...
+                </Text>
+                <Spinner
+                  thickness="4px"
+                  speed="1s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+              </div>
+            )}
           </Center>
         )}
 
@@ -229,6 +276,7 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
             borderRadius="full"
             h="8"
             w="8"
+            p={2}
             bg="red.500"
             color="white"
             _hover={{ boxShadow: 'xl' }}
@@ -241,7 +289,9 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
             justifyContent="center"
             alignItems="center"
             onClick={handleStopCaptureClick}
-          />
+          >
+            Stop
+          </Button>
         )}
 
         <Box>

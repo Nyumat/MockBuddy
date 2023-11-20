@@ -17,6 +17,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 
 import ThemeToggle from '../components/samples/ThemeToggle';
 
@@ -24,10 +25,25 @@ interface Props {
   children: React.ReactNode;
 }
 
-const Links: string[] = ['Video', 'Feedback', 'Onboard']; // TODO: Add links
+const Links: string[] = ['Practice', 'Your Interviews']; // TODO: Add links
 
 const NavLink = (props: Props) => {
   const { children } = props;
+  let url;
+  switch (children) {
+    case 'Practice':
+      url = '/onboard';
+      break;
+    case 'Your Interviews':
+      url = '/feedback';
+      break;
+    case 'Onboard':
+      url = '/onboard';
+      break;
+    default:
+      url = '/';
+      break;
+  }
   return (
     <Box
       as="a"
@@ -38,7 +54,7 @@ const NavLink = (props: Props) => {
         textDecoration: 'none',
         bg: useColorModeValue('gray.200', 'gray.700'),
       }}
-      href={`${children}`}
+      href={url}
     >
       {children}
     </Box>
@@ -47,6 +63,7 @@ const NavLink = (props: Props) => {
 
 export default function WithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
 
   return (
     <Box bg={useColorModeValue('gray.100', 'gray.900')} px={6}>
@@ -86,10 +103,12 @@ export default function WithAction() {
               />
             </MenuButton>
             <MenuList>
-              <MenuItem>Link 1</MenuItem>
-              <MenuItem>Link 2</MenuItem>
+              <MenuItem onClick={() => router.push('/dashboard')}>
+                My Questions
+              </MenuItem>
+              <MenuItem>Settings</MenuItem>
               <MenuDivider />
-              <MenuItem>Link 3</MenuItem>
+              <MenuItem onClick={() => router.push('/')}>Logout</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
