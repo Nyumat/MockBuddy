@@ -6,10 +6,12 @@ import {
   HStack,
   Heading,
   Image,
+  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 
@@ -26,6 +28,8 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
   const [remainingTime, setRemainingTime] = useState<number>(15);
   const [webcamLoaded, setWebcamLoaded] = useState<boolean>(false);
   const videoConstraints = { width: 1940, height: 1480, facingMode: 'user' };
+  const [showSpinner, setShowSpinner] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleDataAvailable = useCallback(
     ({ data }: { data: Blob }) => {
@@ -61,19 +65,23 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
   }, [mediaRecorderRef, setCapturing]);
 
   const handleDownload = useCallback(() => {
+    setShowSpinner(true);
     if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'react-webcam-stream-capture.webm';
-      a.click();
-      window.URL.revokeObjectURL(url);
-      setRecordedChunks([]);
+      //   const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      //   const url = URL.createObjectURL(blob);
+      //   const a = document.createElement('a');
+      //   document.body.appendChild(a);
+      //   a.style.display = 'none';
+      //   a.href = url;
+      //   a.download = 'react-webcam-stream-capture.webm';
+      //   a.click();
+      //   window.URL.revokeObjectURL(url);
+      setTimeout(() => {
+        router.push('/feedback');
+        setRecordedChunks([]);
+      }, 5000);
     }
-  }, [recordedChunks]);
+  }, [recordedChunks, router]);
 
   const handleUserMedia = () => {
     setWebcamReady(true);
@@ -162,7 +170,12 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
           </HStack>
         </Box>
 
-        <Box textAlign="center">
+        <Box
+          textAlign="center"
+          style={{
+            transform: 'translateY(-120px)',
+          }}
+        >
           {!capturing && (
             <Button
               id="startTimer"
@@ -170,27 +183,46 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
               borderRadius="full"
               h="8"
               w="8"
+              p={2}
               bg="red.500"
               color="white"
               _hover={{ boxShadow: 'xl' }}
               ring="4"
               ringColor="white"
-              ringOffsetColor="gray.500"
-              ringOffset="2"
+              ringOffsetColor="white"
+              ringOffset="10"
               transform="active:scale-95"
               transitionDuration="75ms"
               justifyContent="center"
               alignItems="center"
               onClick={handleStartCaptureClick}
-            />
+            >
+              Start
+            </Button>
           )}
         </Box>
 
         {!capturing && recordedChunks.length > 0 && (
           <Center>
-            <Button colorScheme="blue" onClick={handleDownload}>
-              Download
-            </Button>
+            {!showSpinner && (
+              <Button colorScheme="blue" onClick={handleDownload}>
+                Transcribe Video
+              </Button>
+            )}
+            {showSpinner && (
+              <div style={{ textAlign: 'center', display: 'flex', flexDir: 'row', alignItems: 'center', gap: 4 }}>
+                <Text fontSize="lg" color="white">
+                  Transcribing...
+                </Text>
+                <Spinner
+                  thickness="4px"
+                  speed="1s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+              </div>
+            )}
           </Center>
         )}
 
@@ -201,6 +233,7 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
             borderRadius="full"
             h="8"
             w="8"
+            p={2}
             bg="red.500"
             color="white"
             _hover={{ boxShadow: 'xl' }}
@@ -213,7 +246,9 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
             justifyContent="center"
             alignItems="center"
             onClick={handleStopCaptureClick}
-          />
+          >
+            Stop
+          </Button>
         )}
 
         <Box>
