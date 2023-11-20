@@ -34,6 +34,7 @@
         "encoding": "^0.1.13",
         "eslint-config-next": "13.4.4",
         "eventsource-parser": "^1.0.0",
+        "firebase": "^10.6.0",
         "formidable": "^2.1.1",
         "framer-motion": "^10.16.5",
         "lottie-react": "^2.4.0",
@@ -45,6 +46,7 @@
         "react-dom": "^18.2.0",
         "react-icons": "^4.12.0",
         "react-webcam": "^7.0.1",
+        "reactstrap": "^9.2.1",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
