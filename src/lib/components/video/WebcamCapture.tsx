@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 interface WebcamCaptureProps {
   companyName: string;
@@ -30,6 +31,11 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
   const videoConstraints = { width: 1940, height: 1480, facingMode: 'user' };
   const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const router = useRouter();
+
+  const ffmpeg = createFFmpeg({
+    corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
+    log: true,
+  });
 
   const handleDataAvailable = useCallback(
     ({ data }: { data: Blob }) => {
@@ -64,6 +70,7 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
     setRemainingTime(0);
   }, [mediaRecorderRef, setCapturing]);
 
+
   const handleDownload = useCallback(() => {
     setShowSpinner(true);
     if (recordedChunks.length) {
@@ -80,7 +87,43 @@ const WebcamCapture = ({ companyName }: WebcamCaptureProps) => {
         router.push('/feedback');
         setRecordedChunks([]);
       }, 5000);
-    }
+
+//   const handleDownload = useCallback(async () => {
+//     if (recordedChunks.length) {
+//       const file = new Blob(recordedChunks, {
+//         type: `video/mp4`,
+//       });
+
+//       const unique_id = "test";
+
+//       // This checks if ffmpeg is loaded
+//       if (!ffmpeg.isLoaded()) {
+//         await ffmpeg.load();
+//       }
+
+//       // This writes the file to memory, removes the video, and converts the audio to mp3
+//       ffmpeg.FS("writeFile", `${unique_id}.mp4`, await fetchFile(file));
+//       await ffmpeg.run();
+
+//       // This reads the converted file from the file system
+//       const fileData = await ffmpeg.FS("readFile", `${unique_id}.mp4`);
+//       // This creates a new file from the raw data
+//       const output = new File([fileData.buffer], `${unique_id}.mp4`, {
+//         type: "video/mp4",
+//       });
+
+//       const formData = new FormData();
+//       formData.append("file", output, `${unique_id}.mp4`)
+
+//       // This sends the file to the server
+//       const response = await fetch("http://localhost:3000/api/whisper", {
+//         method: "POST",
+//         body: formData,
+//       });
+//       console.log(response);
+//       setRecordedChunks([]);
+
+     }
   }, [recordedChunks, router]);
 
   const handleUserMedia = () => {
