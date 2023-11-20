@@ -18,6 +18,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+import { auth } from '~/firebase';
 
 import ThemeToggle from '../components/samples/ThemeToggle';
 
@@ -64,7 +65,7 @@ const NavLink = (props: Props) => {
 export default function WithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
-
+  
   return (
     <Box bg={useColorModeValue('gray.100', 'gray.900')} px={6}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
@@ -89,7 +90,7 @@ export default function WithAction() {
           <Box mr={4}>
             <ThemeToggle />
           </Box>
-          <Menu>
+          {auth.currentUser ? (<Menu>
             <MenuButton
               as={Button}
               rounded="full"
@@ -108,12 +109,14 @@ export default function WithAction() {
               </MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={() => router.push('/')}>Logout</MenuItem>
+              <MenuItem onClick={() => auth.signOut()}>Log Out</MenuItem>
             </MenuList>
-          </Menu>
+          </Menu>) : (
+            <Button onClick={() => router.push('/signup')}>Sign Up</Button>
+          )}
         </Flex>
       </Flex>
-
+          
       {isOpen ? (
         <Box pb={4} display={{ md: 'none' }}>
           <Stack as="nav" spacing={4}>
